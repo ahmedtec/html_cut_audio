@@ -1,0 +1,61 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cut Audio App</title>
+    <link rel="stylesheet" href="./assets/css/out/jquery-ui.css">
+    <link rel="stylesheet" href="./assets/css/app.css">
+    <script src="./assets/js/out/jquery-3.6.0.js"></script>
+    <script src="./assets/js/out/jquery-ui.js"></script>
+</head>
+
+<body>
+    <div style="" id="display_none_items">
+    <input type="file" id="trimFile"/>
+    <audio src="" id="trimFile_player"></audio>
+    </div>
+    <div class="the_cut_audio_app">
+        <div class="header">
+            <img src="./assets/img/bg2.png" alt="" class="header_img">
+            <div id="get_file"><img src="./assets/img/get_file.gif" alt=""> </div>
+        </div>
+        
+        <div class="content">
+            <div id="input_file_title">اسم ملف الاغنية هنا يكتب</div>
+            <div class="file_selected_length">
+                <div class="start">
+                    وقت البداية
+                    <div id="length_start">00:00</div>
+                </div>
+                <div class="end">
+                    وقت النهاية
+                    <div id="length_end">00:00</div>
+                </div>
+            </div>
+            <div class="file_rang">
+                <div id="slider_range"></div>
+            </div>
+            <div class="file_selected_length small">
+                <div class="start">
+                    <div id="length_start_all">00:00</div>
+                </div>
+                <div class="end">
+                    <div id="length_end_all">00:00</div>
+                </div>
+            </div>
+            <div id="play_file">
+                <img src="./assets/img/play-circle-fill.png" alt="">
+                <p>تشغيل الصوت</p>
+            </div>
+        </div>
+        <div class="dwenload">
+            <div id="dwenload_audio_file">حفظ الملف</div>
+        </div>
+    </div>
+
+    <script src="./assets/js/app.js"></script>
+</body>
+
+</html>

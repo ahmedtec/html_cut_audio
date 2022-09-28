@@ -1,0 +1,127 @@
+@font-face {
+    font-family: 'Vazirmatn';
+    src: url('../fonts/Vazirmatn-Medium.woff2') format('woff2'),
+        url('../fonts/Vazirmatn-Medium.woff') format('woff');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+*,
+::before,
+::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Vazirmatn';
+}
+
+body {
+    font-family: 'Vazirmatn';
+    font-weight: 500;
+    font-style: normal;
+}
+
+.the_cut_audio_app {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    height: 100vh;
+}
+
+#get_file {
+    position: relative;
+    top: -50px;
+    text-align: center;
+}
+
+#get_file img {
+    width: 100px;
+}
+
+.header img {
+    width: 100%;
+}
+
+
+/* content */
+
+.content {
+    width: 100%;
+    text-align: center;
+    padding: 5px 25px;
+    position: relative;
+    top: -45px;
+}
+#input_file_title {
+    margin-bottom: 36px;
+}
+.file_selected_length {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.file_selected_length .start , .file_selected_length .end {
+    color: #3D5CFF;
+    font-weight: bold;
+}
+.file_selected_length #length_end ,.file_selected_length #length_start {
+    color: #000;
+    margin-top: 5px;
+} 
+.file_selected_length.small {
+    font-size: 14px;
+}
+.file_selected_length.small .start ,.file_selected_length.small .end {
+
+    color: rgb(124, 124, 124);
+} 
+.file_rang {
+    position: relative;
+    height: 50px;
+    margin-top: 20px;
+}
+#slider_range{
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 100%;
+}
+#slider_range .ui-widget-header {
+    background: #0030ff40;
+    border: 2px solid #3f51b5;
+}
+#slider_range .ui-slider-handle {
+    width: 37px;
+    height: 37px;
+    top: -19px;
+    margin-left: -19px;
+    border-radius: 50%;
+    background: #266fef;
+}
+#play_file {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 22px 0;
+}
+.dwenload {
+    top: -50px;
+    position: relative;
+}
+
+/* dwenload_audio_file */
+
+#dwenload_audio_file {
+    background: #28CE6B;
+    padding: 12px 15px;
+    width: 76vw;
+    text-align: center;
+    margin: 5px 0 10px;
+    color: #fff;
+    border-radius: 4px;
+    font-size: 15px;
+}
