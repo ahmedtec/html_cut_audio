@@ -1,6 +1,6 @@
 // append audio file into player
-let the_audio_file;
-async function append_audio_file(id_element, id_output, id_append) {
+
+async function append_audio_file(id_element, id_output, id_append, data) {
   let url;
   let trimFile = document.querySelector("#" + id_element).files[0];
   let reader = new FileReader();
@@ -28,35 +28,42 @@ async function append_audio_file(id_element, id_output, id_append) {
   };
   reader.readAsDataURL(trimFile);
   reader.addEventListener("loadend", (e) => {
-    setInterval(() => {
+    let intervalID = setInterval(() => {
       try {
         if (document.getElementById("trimFile_player").duration) {
           console.log(document.getElementById("trimFile_player").duration);
+          cutter(data, document.getElementById("trimFile_player").duration)
+          clearInterval(intervalID)
         }
       } catch (e) {
         console.log("eroor", e);
       }
       console.log(document.getElementById("trimFile_player").duration);
     }, 500);
+
   });
 }
 
 document.getElementById("get_file").addEventListener("click", (e) => {
   document.getElementById("trimFile").click();
 });
-document.getElementById("trimFile").addEventListener("change", async (e) => {
-  document.getElementById("input_file_title").innerText =
-    e.target.files[0].name.length > 30
-      ? e.target.files[0].name.slice(0, 30) + "...."
-      : e.target.files[0].name;
+document.getElementById("trimFile").addEventListener("change", (e) => {
+  append_audio_file("trimFile", "trimFile_player", "display_none_items", e);
+});
 
-  await append_audio_file("trimFile", "trimFile_player", "display_none_items");
+cutter = async (name, length) => {
+  document.getElementById("input_file_title").innerText =
+    name.target.files[0].name.length > 30
+      ? name.target.files[0].name.slice(0, 30) + "...."
+      : name.target.files[0].name;
+
+
 
   //  console.log("222222222222",document.getElementById("trimFile_player").duration);
   // console.log(document.getElementById("trimFile_player").duration);
 
   let length_start = 0;
-  let length_end = 250;
+  let length_end = length;
 
   let trimStart;
   let trimEnd;
@@ -64,9 +71,11 @@ document.getElementById("trimFile").addEventListener("change", async (e) => {
     $("#length_start , #length_start_all").text(
       seconds2hms(length_start).m + " : " + seconds2hms(length_start).s
     );
+    $("#length_start").attr('time', length_start)
     $("#length_end , #length_end_all").text(
       seconds2hms(length_end).m + " : " + seconds2hms(length_end).s
     );
+    $("#length_end").attr('time', length_end)
     $("#slider_range").slider({
       range: true,
       min: length_start,
@@ -76,16 +85,18 @@ document.getElementById("trimFile").addEventListener("change", async (e) => {
         $("#length_start").text(
           seconds2hms(ui.values[0]).m + " : " + seconds2hms(ui.values[0]).s
         );
+        $("#length_start").attr('time', ui.values[0])
         $("#length_end").text(
           seconds2hms(ui.values[1]).m + " : " + seconds2hms(ui.values[1]).s
         );
+        $("#length_end").attr('time', ui.values[1])
       },
     });
     $("#amount").val(
       "$" +
-        $("#slider_range").slider("values", 0) +
-        " - $" +
-        $("#slider_range").slider("values", 1)
+      $("#slider_range").slider("values", 0) +
+      " - $" +
+      $("#slider_range").slider("values", 1)
     );
   });
 
@@ -300,7 +311,7 @@ document.getElementById("trimFile").addEventListener("change", async (e) => {
           numberOfChannels,
           bitDepth
         );
-        blob = new Blob([new Uint8Array(arrayBuffer)], { type: "audio/wav" });
+        blob = new Blob([new Uint8Array(arrayBuffer)], { type: "audio/mp3" });
       }
       return blob;
     }
@@ -385,8 +396,10 @@ document.getElementById("trimFile").addEventListener("change", async (e) => {
     if ($("#trimFile")[0].files[0]) {
       $("#trimError").text("");
       let file = $("#trimFile")[0].files[0];
-      trimStart = Number($("#trimStart").val());
-      trimEnd = Number($("#trimEnd").val());
+      // trimStart = Number($("#trimStart").val());
+      // trimEnd = Number($("#trimEnd").val());
+      trimStart = Number($("#length_start").attr('time'));
+      trimEnd = Number($("#length_end").attr('time'));
       audioMaker.trim(file, trimStart, trimEnd).then((blob) => {
         makeOutputElement("trimOutput", blob);
       });
@@ -400,8 +413,37 @@ document.getElementById("trimFile").addEventListener("change", async (e) => {
   document
     .getElementById("dwenload_audio_file")
     .addEventListener("click", (e) => {
+      console.log("dwenload_audio_file");
       trimAudio();
     });
 
+    let playSetTimeout
+  document
+    .getElementById("play_file")
+    .addEventListener("click", (e) => {
+      let audioPlayer = document.getElementById("trimFile_player");
+      let start = $("#length_start").attr('time'); 10
+      let end = $("#length_end").attr('time'); 50
+      audioPlayer.currentTime = start;
+      try {
+        if (playSetTimeout) {
+          clearTimeout(playSetTimeout)
+          console.log("clearTimeout > playSetTimeout", playSetTimeout);
+        }
+      } catch (e) {
+        console.log(e)
+      }
+      if (audioPlayer.paused) {
+        audioPlayer.play()
+      } else {
+        audioPlayer.pause()
+      }
+
+      playSetTimeout = setTimeout(() => {
+        audioPlayer.pause()
+      }, (end - start) * 1000);
+      console.log("playSetTimeout", playSetTimeout);
+    });
+
   //  console.log(document.getElementById("trimFile_player").duration);
-});
+}
