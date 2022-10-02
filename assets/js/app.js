@@ -351,6 +351,7 @@ cutter = async (name, length) => {
         blockAlign = numChannels * bytesPerSample,
         buffer = new ArrayBuffer(44 + samples.length * bytesPerSample),
         view = new DataView(buffer);
+       
       /* RIFF identifier */
       _self.writeString(view, 0, "RIFF");
       /* RIFF chunk length */
@@ -382,17 +383,17 @@ cutter = async (name, length) => {
 
 
       let wavHdr = lamejs.WavHeader.readHeader(new DataView(buffer));
-      console.log("wavHdr", wavHdr);
-      let wavSamples = new Int16Array(
-        buffer,
-        wavHdr.dataOffset,
-        wavHdr.dataLen / 2
-      );
-      console.log("wavSamples", wavSamples);
-      wavToMp3(wavHdr.channels, wavHdr.sampleRate, wavSamples);
+        console.log("wavHdr", wavHdr);
+        let wavSamples = new Int16Array(
+          buffer,
+          wavHdr.dataOffset,
+          wavHdr.dataLen / 2
+        );
+        console.log("wavSamples", wavSamples);
+        wavToMp3(wavHdr.channels, wavHdr.sampleRate, wavSamples);
 
 
-      
+
       return buffer;
     }
   }
