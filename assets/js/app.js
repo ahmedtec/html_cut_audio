@@ -160,7 +160,7 @@ cutter = async (name, length) => {
                   .slice(trimStart, trimEnd);
               }
 
-              analyzeAudioBuffer(decodedData)
+              
               resolve(
 
                 _self._exportAudio(trimmedData, decodedData.numberOfChannels)
@@ -297,7 +297,7 @@ cutter = async (name, length) => {
       });
     }
 
-    _exportAudio(samplesData, numberOfChannels) {
+   async _exportAudio(samplesData, numberOfChannels) {
       let _self = this,
         arrayBuffer,
         blob;
@@ -312,6 +312,11 @@ cutter = async (name, length) => {
           bitDepth
         );
         
+        await _self.aContext
+            .decodeAudioData(arrayBuffer)
+            .then((decodedData) => {
+              analyzeAudioBuffer(decodedData)
+            })
         // let wavHdr = lamejs.WavHeader.readHeader(new DataView(arrayBuffer));
         // console.log("wavHdr", wavHdr);
         // let wavSamples = new Int16Array(
