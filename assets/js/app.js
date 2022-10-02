@@ -32,15 +32,14 @@ async function append_audio_file(id_element, id_output, id_append, data) {
       try {
         if (document.getElementById("trimFile_player").duration) {
           console.log(document.getElementById("trimFile_player").duration);
-          cutter(data, document.getElementById("trimFile_player").duration)
-          clearInterval(intervalID)
+          cutter(data, document.getElementById("trimFile_player").duration);
+          clearInterval(intervalID);
         }
       } catch (e) {
         console.log("eroor", e);
       }
       console.log(document.getElementById("trimFile_player").duration);
     }, 500);
-
   });
 }
 
@@ -57,8 +56,6 @@ cutter = async (name, length) => {
       ? name.target.files[0].name.slice(0, 30) + "...."
       : name.target.files[0].name;
 
-
-
   //  console.log("222222222222",document.getElementById("trimFile_player").duration);
   // console.log(document.getElementById("trimFile_player").duration);
 
@@ -71,11 +68,11 @@ cutter = async (name, length) => {
     $("#length_start , #length_start_all").text(
       seconds2hms(length_start).m + " : " + seconds2hms(length_start).s
     );
-    $("#length_start").attr('time', length_start)
+    $("#length_start").attr("time", length_start);
     $("#length_end , #length_end_all").text(
       seconds2hms(length_end).m + " : " + seconds2hms(length_end).s
     );
-    $("#length_end").attr('time', length_end)
+    $("#length_end").attr("time", length_end);
     $("#slider_range").slider({
       range: true,
       min: length_start,
@@ -85,18 +82,18 @@ cutter = async (name, length) => {
         $("#length_start").text(
           seconds2hms(ui.values[0]).m + " : " + seconds2hms(ui.values[0]).s
         );
-        $("#length_start").attr('time', ui.values[0])
+        $("#length_start").attr("time", ui.values[0]);
         $("#length_end").text(
           seconds2hms(ui.values[1]).m + " : " + seconds2hms(ui.values[1]).s
         );
-        $("#length_end").attr('time', ui.values[1])
+        $("#length_end").attr("time", ui.values[1]);
       },
     });
     $("#amount").val(
       "$" +
-      $("#slider_range").slider("values", 0) +
-      " - $" +
-      $("#slider_range").slider("values", 1)
+        $("#slider_range").slider("values", 0) +
+        " - $" +
+        $("#slider_range").slider("values", 1)
     );
   });
 
@@ -381,7 +378,21 @@ cutter = async (name, length) => {
       /* data chunk length */
       view.setUint32(40, samples.length * bytesPerSample, true);
       _self.writeFloat32(view, 44, samples);
-      wavToMp3(2, _self.sampleRate, view)
+      console.log("_self", _self, "view", view, "buffer", buffer);
+
+
+      let wavHdr = lamejs.WavHeader.readHeader(new DataView(buffer));
+      console.log("wavHdr", wavHdr);
+      let wavSamples = new Int16Array(
+        buffer,
+        wavHdr.dataOffset,
+        wavHdr.dataLen / 2
+      );
+      console.log("wavSamples", wavSamples);
+      wavToMp3(wavHdr.channels, wavHdr.sampleRate, wavSamples);
+
+
+      
       return buffer;
     }
   }
@@ -407,8 +418,8 @@ cutter = async (name, length) => {
       let file = $("#trimFile")[0].files[0];
       // trimStart = Number($("#trimStart").val());
       // trimEnd = Number($("#trimEnd").val());
-      trimStart = Number($("#length_start").attr('time'));
-      trimEnd = Number($("#length_end").attr('time'));
+      trimStart = Number($("#length_start").attr("time"));
+      trimEnd = Number($("#length_end").attr("time"));
       audioMaker.trim(file, trimStart, trimEnd).then((blob) => {
         makeOutputElement("trimOutput", blob);
       });
@@ -426,43 +437,42 @@ cutter = async (name, length) => {
       trimAudio();
     });
 
-  let playSetTimeout
-  document
-    .getElementById("play_file")
-    .addEventListener("click", (e) => {
-      let audioPlayer = document.getElementById("trimFile_player");
-      let start = $("#length_start").attr('time'); 10
-      let end = $("#length_end").attr('time'); 50
-      audioPlayer.currentTime = start;
-      try {
-        if (playSetTimeout) {
-          clearTimeout(playSetTimeout)
-          console.log("clearTimeout > playSetTimeout", playSetTimeout);
-        }
-      } catch (e) {
-        console.log(e)
+  let playSetTimeout;
+  document.getElementById("play_file").addEventListener("click", (e) => {
+    let audioPlayer = document.getElementById("trimFile_player");
+    let start = $("#length_start").attr("time");
+    10;
+    let end = $("#length_end").attr("time");
+    50;
+    audioPlayer.currentTime = start;
+    try {
+      if (playSetTimeout) {
+        clearTimeout(playSetTimeout);
+        console.log("clearTimeout > playSetTimeout", playSetTimeout);
       }
-      if (audioPlayer.paused) {
-        audioPlayer.play()
-      } else {
-        audioPlayer.pause()
-      }
+    } catch (e) {
+      console.log(e);
+    }
+    if (audioPlayer.paused) {
+      audioPlayer.play();
+    } else {
+      audioPlayer.pause();
+    }
 
-      playSetTimeout = setTimeout(() => {
-        audioPlayer.pause()
-      }, (end - start) * 1000);
-      console.log("playSetTimeout", playSetTimeout);
-    });
+    playSetTimeout = setTimeout(() => {
+      audioPlayer.pause();
+    }, (end - start) * 1000);
+    console.log("playSetTimeout", playSetTimeout);
+  });
 
   //  console.log(document.getElementById("trimFile_player").duration);
-}
-
+};
 
 function saveFile(blob, filename) {
   if (window.navigator.msSaveOrOpenBlob) {
     window.navigator.msSaveOrOpenBlob(blob, filename);
   } else {
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     document.body.appendChild(a);
     const url = window.URL.createObjectURL(blob);
     a.href = url;
@@ -471,32 +481,54 @@ function saveFile(blob, filename) {
     setTimeout(() => {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-    }, 0)
+    }, 0);
   }
 }
 
 function wavToMp3(channels, sampleRate, samples) {
-    var buffer = [];
-    var mp3enc = new lamejs.Mp3Encoder(channels, sampleRate, 128);
-    var remaining = samples.length;
-    var samplesPerFrame = 1152;
-    for (var i = 0; remaining >= samplesPerFrame; i += samplesPerFrame) {
-        var mono = samples.subarray(i, i + samplesPerFrame);
-        var mp3buf = mp3enc.encodeBuffer(mono);
-        if (mp3buf.length > 0) {
-            buffer.push(new Int8Array(mp3buf));
-        }
-        remaining -= samplesPerFrame;
-    }
-    var d = mp3enc.flush();
-    if(d.length > 0){
-        buffer.push(new Int8Array(d));
-    }
+  var buffer = [];
+  // var mp3enc = new lamejs.Mp3Encoder(channels, sampleRate, 128);
+  // var remaining = samples.length;
+  // var samplesPerFrame = 1152;
+  // for (var i = 0; remaining >= samplesPerFrame; i += samplesPerFrame) {
+  //     var mono = samples.subarray(i, i + samplesPerFrame);
+  //     var mp3buf = mp3enc.encodeBuffer(mono);
+  //     if (mp3buf.length > 0) {
+  //         buffer.push(new Int8Array(mp3buf));
+  //     }
+  //     remaining -= samplesPerFrame;
+  // }
+  // var d = mp3enc.flush();
 
-    var mp3Blob = new Blob(buffer, {type: 'audio/mp3'});
-    var bUrl = window.URL.createObjectURL(mp3Blob);
-    saveFile(mp3Blob, "itsmp3")
-    // send the download link to the console
-    console.log('mp3 download:', bUrl);
+  mp3encoder = new lamejs.Mp3Encoder(channels, sampleRate, 128);
+  var mp3Data = [];
 
+  left = new Int16Array(sampleRate); //one second of silence (get your data from the source you have)
+  right = new Int16Array(sampleRate); //one second of silence (get your data from the source you have)
+  sampleBlockSize = 1152; //can be anything but make it a multiple of 576 to make encoders life easier
+
+  for (var i = 0; i < samples.length; i += sampleBlockSize) {
+    leftChunk = left.subarray(i, i + sampleBlockSize);
+    rightChunk = right.subarray(i, i + sampleBlockSize);
+    var mp3buf = mp3encoder.encodeBuffer(leftChunk, rightChunk);
+    if (mp3buf.length > 0) {
+      mp3Data.push(mp3buf);
+    }
+  }
+  var mp3buf = mp3encoder.flush(); //finish writing mp3
+
+  if (mp3buf.length > 0) {
+    mp3Data.push(mp3buf);
+  }
+
+  console.log(mp3buf);
+  if (mp3buf.length > 0) {
+    buffer.push(new Int8Array(mp3buf));
+  }
+
+  var mp3Blob = new Blob(buffer, { type: "audio/mp3" });
+  var bUrl = window.URL.createObjectURL(mp3Blob);
+  saveFile(mp3Blob, "itsmp3");
+  // send the download link to the console
+  console.log("mp3 download:", bUrl);
 }
