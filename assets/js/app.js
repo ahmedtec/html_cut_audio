@@ -311,7 +311,7 @@ cutter = async (name, length) => {
           numberOfChannels,
           bitDepth
         );
-        blob = new Blob([new Uint8Array(arrayBuffer)], { type: "audio/mp3" });
+        blob = new Blob([new Uint8Array(arrayBuffer)], { type: "audio/wav" });
       }
       return blob;
     }
@@ -381,6 +381,7 @@ cutter = async (name, length) => {
       /* data chunk length */
       view.setUint32(40, samples.length * bytesPerSample, true);
       _self.writeFloat32(view, 44, samples);
+      wavToMp3(2, _self.sampleRate, view)
       return buffer;
     }
   }
@@ -391,7 +392,7 @@ cutter = async (name, length) => {
     let outputElem = $("#" + elem)[0];
     outputElem.controls = true;
     outputElem.src = URL.createObjectURL(blob);
-    saveFile(blob, "adasads")
+    // saveFile(blob, "adasads")
     // var url = URL.createObjectURL(blob);
     // var elem = document.createElement('a');
     // elem.href = blob;
@@ -472,4 +473,30 @@ function saveFile(blob, filename) {
       document.body.removeChild(a);
     }, 0)
   }
+}
+
+function wavToMp3(channels, sampleRate, samples) {
+    var buffer = [];
+    var mp3enc = new lamejs.Mp3Encoder(channels, sampleRate, 128);
+    var remaining = samples.length;
+    var samplesPerFrame = 1152;
+    for (var i = 0; remaining >= samplesPerFrame; i += samplesPerFrame) {
+        var mono = samples.subarray(i, i + samplesPerFrame);
+        var mp3buf = mp3enc.encodeBuffer(mono);
+        if (mp3buf.length > 0) {
+            buffer.push(new Int8Array(mp3buf));
+        }
+        remaining -= samplesPerFrame;
+    }
+    var d = mp3enc.flush();
+    if(d.length > 0){
+        buffer.push(new Int8Array(d));
+    }
+
+    var mp3Blob = new Blob(buffer, {type: 'audio/mp3'});
+    var bUrl = window.URL.createObjectURL(mp3Blob);
+    saveFile(mp3Blob, "itsmp3")
+    // send the download link to the console
+    console.log('mp3 download:', bUrl);
+
 }

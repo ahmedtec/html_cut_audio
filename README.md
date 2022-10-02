@@ -13,3 +13,6 @@ https://stackoverflow.com/questions/20585899/javascript-html5-audio-play-mp3-fil
 
 save file 
 https://stackoverflow.com/questions/19327749/javascript-blob-filename-without-linkb
+
+wav to mp3
+https://stackoverflow.com/questions/61264581/how-to-convert-audio-buffer-to-mp3-in-javascript
