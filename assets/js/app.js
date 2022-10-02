@@ -391,6 +391,14 @@ cutter = async (name, length) => {
     let outputElem = $("#" + elem)[0];
     outputElem.controls = true;
     outputElem.src = URL.createObjectURL(blob);
+    saveFile(blob, "adasads")
+    // var url = URL.createObjectURL(blob);
+    // var elem = document.createElement('a');
+    // elem.href = blob;
+    // elem.download = "132132";
+    // elem.id = "downloadAnchor";
+    // document.body.appendChild(elem);
+    // $('#downloadAnchor').click();
   };
   let trimAudio = () => {
     if ($("#trimFile")[0].files[0]) {
@@ -417,7 +425,7 @@ cutter = async (name, length) => {
       trimAudio();
     });
 
-    let playSetTimeout
+  let playSetTimeout
   document
     .getElementById("play_file")
     .addEventListener("click", (e) => {
@@ -446,4 +454,22 @@ cutter = async (name, length) => {
     });
 
   //  console.log(document.getElementById("trimFile_player").duration);
+}
+
+
+function saveFile(blob, filename) {
+  if (window.navigator.msSaveOrOpenBlob) {
+    window.navigator.msSaveOrOpenBlob(blob, filename);
+  } else {
+    const a = document.createElement('a');
+    document.body.appendChild(a);
+    const url = window.URL.createObjectURL(blob);
+    a.href = url;
+    a.download = filename;
+    a.click();
+    setTimeout(() => {
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    }, 0)
+  }
 }
